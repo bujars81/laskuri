@@ -32,7 +32,7 @@ body {
 }
 
 .counter-row span {
-  min-width: 230px;
+  min-width: 260px;
   text-align: right;
   font-weight: bold;
 }
