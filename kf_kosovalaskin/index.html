@@ -1,79 +1,137 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
-  <title>Kävijälaskuri</title>
+  <title>KF Kosova kävijälaskuri</title>
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    #login {
+      max-width: 300px;
+      margin: 100px auto;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 8px;
+    }
+    button {
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    #content {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <div class="logo-container">
-    <img src="logo.png" alt="KF Kosova Futsal Logo" class="logo">
-  </div>
-  <h1>KF Kosova kävijälaskuri</h1>
 
-  <label for="matchSelect">Kotiottelut:</label>
-  <select id="matchSelect">
-    <option value="19.10.2025 17:00 vs VehU">19.10.2025 17:00 vs VehU</option>
-    <option value="26.10.2025 13:00 vs EBK">26.10.2025 13:00 vs EBK</option>
-    <option value="22.11.2025 13:00 vs PJK">22.11.2025 13:00 vs PJK</option>
-    <option value="07.12.2025 17:30 vs Mad Max">07.12.2025 17:30 vs Mad Max</option>
-    <option value="10.01.2026 16:00 vs FC Kemi">10.01.2026 16:00 vs FC Kemi</option>
-    <option value="11.01.2026 17:30 vs Vieska Futsal">11.01.2026 17:30 vs Vieska Futsal</option>
-    <option value="07.02.2026 15:00 vs Riemu">07.02.2026 15:00 vs Riemu</option>
-    <option value="15.02.2026 19:00 vs TPK">15.02.2026 19:00 vs TPK</option>
-    <option value="22.02.2026 13:00 vs ToPV">22.02.2026 13:00 vs ToPV</option>
-    <option value="22.02.2026 13:00 vs SoVo">22.02.2026 13:00 vs SoVo</option>
-  </select>
-
-  <div class="counter-section">
-    <div class="counter-row">
-      <span>Kausikortilla:</span>
-      <button onclick="addSeasonTicket()" class="plus">+</button>
-      <button onclick="removeSeasonTicket()" class="minus">−</button>
-    </div>
-    <div class="counter-row">
-      <span>Lipunmyynti(8€):</span>
-      <button onclick="addCash()" class="plus">+</button>
-      <button onclick="removeCash()" class="minus">−</button>
-    </div>
-    <div class="counter-row">
-      <span>Opisk./Eläke (6€):</span>
-      <button onclick="addDiscount()" class="plus">+</button>
-      <button onclick="removeDiscount()" class="minus">−</button>
-    </div>
-    <div class="counter-row">
-      <span>Alennusliput (11v–17v 5€):</span>
-      <button onclick="addYouthDiscount()" class="plus">+</button>
-      <button onclick="removeYouthDiscount()" class="minus">−</button>
-    </div>
-    <div class="counter-row">
-      <span>Lapset alle 10v (0€):</span>
-      <button onclick="addFreeChild()" class="plus">+</button>
-      <button onclick="removeFreeChild()" class="minus">−</button>
-    </div>
-    <div class="counter-row">
-      <span>Kutsuvieraat:</span>
-      <button onclick="addVIP()" class="plus">+</button>
-      <button onclick="removeVIP()" class="minus">−</button>
-    </div>
+  <!-- Login-näkymä -->
+  <div id="login">
+    <h2>Kirjaudu sisään</h2>
+    <input type="text" id="username" placeholder="Käyttäjätunnus">
+    <input type="password" id="password" placeholder="Salasana">
+    <button onclick="login()">Kirjaudu</button>
+    <p id="error" style="color:red;"></p>
   </div>
 
-  <div class="buttons">
-    <button onclick="resetCounts()" class="reset">Nollaa</button>
-    <button onclick="saveToCSV()" class="save">Tallenna Exceliin</button>
+  <!-- Varsinainen sisältö -->
+  <div id="content">
+    <div class="logo-container">
+      <img src="logo.png" alt="KF Kosova Futsal Logo" class="logo">
+    </div>
+    <h1>KF Kosova kävijälaskuri</h1>
+
+    <label for="matchSelect">Kotiottelut:</label>
+    <select id="matchSelect">
+      <option value="19.10.2025 17:00 vs VehU">19.10.2025 17:00 vs VehU</option>
+      <option value="26.10.2025 13:00 vs EBK">26.10.2025 13:00 vs EBK</option>
+      <option value="22.11.2025 13:00 vs PJK">22.11.2025 13:00 vs PJK</option>
+      <option value="07.12.2025 17:30 vs Mad Max">07.12.2025 17:30 vs Mad Max</option>
+      <option value="10.01.2026 16:00 vs FC Kemi">10.01.2026 16:00 vs FC Kemi</option>
+      <option value="11.01.2026 17:30 vs Vieska Futsal">11.01.2026 17:30 vs Vieska Futsal</option>
+      <option value="07.02.2026 15:00 vs Riemu">07.02.2026 15:00 vs Riemu</option>
+      <option value="15.02.2026 19:00 vs TPK">15.02.2026 19:00 vs TPK</option>
+      <option value="22.02.2026 13:00 vs ToPV">22.02.2026 13:00 vs ToPV</option>
+      <option value="22.02.2026 13:00 vs SoVo">22.02.2026 13:00 vs SoVo</option>
+    </select>
+
+    <div class="counter-section">
+      <div class="counter-row">
+        <span>Kausikortilla:</span>
+        <button onclick="addSeasonTicket()" class="plus">+</button>
+        <button onclick="removeSeasonTicket()" class="minus">−</button>
+      </div>
+      <div class="counter-row">
+        <span>Lipunmyynti(8€):</span>
+        <button onclick="addCash()" class="plus">+</button>
+        <button onclick="removeCash()" class="minus">−</button>
+      </div>
+      <div class="counter-row">
+        <span>Alennusliput (6€):</span>
+        <button onclick="addDiscount()" class="plus">+</button>
+        <button onclick="removeDiscount()" class="minus">−</button>
+      </div>
+      <div class="counter-row">
+        <span>Alennusliput (11v–17v 5€):</span>
+        <button onclick="addYouthDiscount()" class="plus">+</button>
+        <button onclick="removeYouthDiscount()" class="minus">−</button>
+      </div>
+      <div class="counter-row">
+        <span>Lapset alle 10v (0€):</span>
+        <button onclick="addFreeChild()" class="plus">+</button>
+        <button onclick="removeFreeChild()" class="minus">−</button>
+      </div>
+      <div class="counter-row">
+        <span>Kutsuvieraat:</span>
+        <button onclick="addVIP()" class="plus">+</button>
+        <button onclick="removeVIP()" class="minus">−</button>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button onclick="resetCounts()" class="reset">Nollaa</button>
+      <button onclick="saveToCSV()" class="save">Tallenna Exceliin</button>
+    </div>
+
+    <div class="results">
+      <p>Kausikortilla: <span id="seasonCount">0</span></p>
+      <p>Lipunmyynti: <span id="cashCount">0</span></p>
+      <p>Alennusliput: <span id="discountCount">0</span></p>
+      <p>Alennusliput (11v–17v): <span id="youthDiscountCount">0</span></p>
+      <p>Lapset alle 10v: <span id="freeChildCount">0</span></p>
+      <p>Kutsuvieraat: <span id="vipCount">0</span></p>
+      <p>Yhteensä kävijöitä: <span id="totalCount">0</span></p>
+      <p><strong>Kokonaistuotto: <span id="totalRevenue">0</span> €</strong></p>
+    </div>
   </div>
 
-  <div class="results">
-    <p>Kausikortilla: <span id="seasonCount">0</span></p>
-    <p>Lipunmyynti: <span id="cashCount">0</span></p>
-    <p>Opisk./Eläke: <span id="discountCount">0</span></p>
-    <p>Alennusliput (11v–17v): <span id="youthDiscountCount">0</span></p>
-    <p>Lapset alle 10v: <span id="freeChildCount">0</span></p>
-    <p>Kutsuvieraat: <span id="vipCount">0</span></p>
-    <p>Yhteensä kävijöitä: <span id="totalCount">0</span></p>
-    <p><strong>Kokonaistuotto: <span id="totalRevenue">0</span> €</strong></p>
-  </div>
+  <script>
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+
+      // Vaihda nämä haluamiksesi
+      const oikeaUser = "fidi";
+      const oikeaPass = "1234";
+
+      if (user === oikeaUser && pass === oikeaPass) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("content").style.display = "block";
+      } else {
+        document.getElementById("error").textContent = "Väärä käyttäjätunnus tai salasana!";
+      }
+    }
+  </script>
 </body>
 </html>
