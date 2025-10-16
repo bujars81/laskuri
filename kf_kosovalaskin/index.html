@@ -116,23 +116,51 @@
     </div>
   </div>
 
-  <script>
-    function login() {
-      const user = document.getElementById("username").value;
-      const pass = document.getElementById("password").value;
+<script>
+  function login() {
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
 
-      // Vaihda nämä haluamiksesi
-      const oikeaUser = "fidi";
-      const oikeaPass = "1234";
+    // Oikeat tunnukset
+    const oikeaUser = "fidi";
+    const oikeaPass = "1234";
 
-      if (user === oikeaUser && pass === oikeaPass) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("content").style.display = "block";
-      } else {
-        document.getElementById("error").textContent = "Väärä käyttäjätunnus tai salasana!";
-      }
+    if (user === oikeaUser && pass === oikeaPass) {
+      // Tallenna kirjautuminen ja aikaleima localStorageen
+      const expiresAt = Date.now() + 5 * 60 * 60 * 1000; // 5 tuntia eteenpäin
+      localStorage.setItem("loggedIn", "true");
+      localStorage.setItem("expiresAt", expiresAt.toString());
+
+      // Näytä sisältö
+      document.getElementById("login").style.display = "none";
+      document.getElementById("content").style.display = "block";
+    } else {
+      document.getElementById("error").textContent = "Väärä käyttäjätunnus tai salasana!";
     }
-  </script>
+  }
+
+  // Tarkistetaan, onko käyttäjä jo kirjautunut
+  function checkLoginStatus() {
+    const loggedIn = localStorage.getItem("loggedIn");
+    const expiresAt = localStorage.getItem("expiresAt");
+
+    if (loggedIn === "true" && expiresAt && Date.now() < parseInt(expiresAt)) {
+      // Vielä voimassa
+      document.getElementById("login").style.display = "none";
+      document.getElementById("content").style.display = "block";
+    } else {
+      // Ei kirjautunut tai aika loppunut
+      localStorage.removeItem("loggedIn");
+      localStorage.removeItem("expiresAt");
+      document.getElementById("login").style.display = "block";
+      document.getElementById("content").style.display = "none";
+    }
+  }
+
+  // Tarkista tila heti sivun latautuessa
+  window.onload = checkLoginStatus;
+</script>
+
 <footer style="text-align:center; color:gray; margin-top:20px;">
   © 2025 Powered by <strong>Bujar Selimi</strong>
 </footer>
